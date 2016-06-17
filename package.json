@@ -1,0 +1,16 @@
+{
+  "name": "RubikCubeSolver",
+  "main": "app.html",
+  "window": {
+    "frame": true,
+    "transparent": false,
+    "width":640,
+    "height":640,
+    "resizable":false
+  },
+  "dependencies": {
+    "convolve": "^0.1.0",
+    "serialport": "^3.1.2",
+    "promise": "^7.1.1"
+  }
+}

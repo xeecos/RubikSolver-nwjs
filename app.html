@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html><meta charset="UTF-8">
+<head>
+  <title>RubikCuberSolver</title>
+  <style>
+  body{
+    margin:0 0;
+  }
+  </style>
+  <script src="js/jquery-1.12.3.min.js"></script>
+</head>
+<body style="width: 100%; height: 100%;">
+<div style="margin:0 auto;width:640px;">
+    <div style="margin:0px auto 0 auto;width:640px;height:480px;z-index:2;">
+        <video id="video" width="640px" height="480px" autoplay style="margin:0px auto;width:640px;height:480px;display:none;"></video>
+		<canvas id="drawing" width="640px" height="480px" style="z-index:1;margin:0 0;width:640px;height:480px;"></canvas>
+    </div>
+    <p><label for="serialport" style="display:inline-block">Serial Port:</label>
+      <select id="serialport" style="width:100px"></select> <button id="connectBt" onClick="onConnect();">Connect</button>   <label style="display:inline-block">GCode:</label>
+      <input id="inputgcode" style="width:200px" type="input" value="M1 V1"></input> <button id="sendgcode" onClick="onSend();">Send</button><button id="capture" onClick="onCheckColor();">Capture</button><button onClick="onFlipX(1);">FlipX+1</button><button onClick="onFlipX(-1);">FlipX-1</button><button onClick="onFlipY(1);">FlipY+1</button><button onClick="onFlipY(-1);">FlipY-1</button><button onClick="onHoldX();">HoldX</button><button onClick="onReleaseX();">ReleaseX</button><button onClick="onHoldY();">HoldY</button><button onClick="onReleaseY();">ReleaseY</button><button onClick="onRotateX(1,0);">Rotate Front+1</button><button onClick="onRotateX(-1,0);">Rotate Front-1</button><button onClick="onRotateX(1,1);">Rotate Back+1</button><button onClick="onRotateX(-1,1);">Rotate Back-1</button><button onClick="onRotateY(1,0);">Rotate Left+1</button><button onClick="onRotateY(-1,0);">Rotate Left-1</button><button onClick="onRotateY(1,1);">Rotate Right+1</button><button onClick="onRotateY(-1,1);">Rotate Right-1</button><button onClick="startCapture();">Start Capture</button><button onClick="test();">Start Test</button></p>
+    <div id="result"></div>
+</div>
+<script>
+var Promise = require('promise');
+var RubiksCubeSolver = require("./lib/solver");
+var frameWidth = 640;
+var frameHeight = 480;
+var sx = 306;
+var sy = 148;
+var dw = 40;
+var rw = 4;
+var lw = 52;
+var dv = rw;
+var len = rw*rw;
+var canvas;
+var context;
+var video;
+var isMoving = false;
+var cubesResult = "";
+var faceIndex = 0;
+var stateIndex = 0;
+var faceColors = [];
+var faceNames = ["U","B","D","F","L","R"];
+var faces = {U:0,B:1,D:2,F:3,L:4,R:5};
+var connectId = -1;
+var commands = [];
+var commandsAction = {};
+var globalResolve = function(){};
+commandsAction["U"]="m2 v-1\nm5 v1\nm2 v1";
+commandsAction["U'"]="m2 v-1\nm5 v-1\nm2 v1";
+commandsAction["F"]="m5 v1";
+commandsAction["F'"]="m5 v-1";
+commandsAction["D"]="m2 v-1\nm6 v1\nm2 v1";
+commandsAction["D'"]="m2 v-1\nm6 v-1\nm2 v1";
+commandsAction["B"]="m6 v1";
+commandsAction["B'"]="m6 v-1";
+commandsAction["L"]="m7 v1";
+commandsAction["L'"]="m7 v-1";
+commandsAction["R"]="m8 v1";
+commandsAction["R'"]="m8 v-1";
+commandsAction["U2"]="m2 v-1\nm5 v2\nm2 v1";
+commandsAction["F2"]="m5 v2";
+commandsAction["D2"]="m2 v-1\nm6 v2\nm2 v1";
+commandsAction["B2"]="m6 v2";
+commandsAction["L2"]="m7 v2";
+commandsAction["R2"]="m8 v2";
+function startSolver(){
+}
+function onConnect(){
+	if($("#connectBt").html()=="Disconnect"){
+		chrome.serial.disconnect(connectId,function(result){
+			connectId = -1;
+			$("#connectBt").html("Connect");
+		});
+		return;
+	}
+    var port = $("#serialport option:selected" ).val();
+	console.log(port);
+	chrome.serial.connect(port, {bitrate: 115200},  function(connectionInfo) {
+		connectId = connectionInfo.connectionId;
+		$("#connectBt").html("Disconnect");
+	});
+}
+function onSend(){
+	sendStr($("#inputgcode").val()+"\n");
+}
+function sendStr(str) {
+	if(connectId!=-1){
+	  chrome.serial.send(connectId, convertStringToArrayBuffer(str), function(result){
+	  });
+	}
+}
+function onSerialReceived(str){
+	globalResolve(str);
+}
+function onFlipX(dir){
+	sendStr("m1 v"+dir+"\n");
+}
+function onFlipY(dir){
+	sendStr("m2 v"+dir+"\n");
+}
+function onHoldX(){
+	sendStr("m3 v1\n");
+}
+function onHoldY(){
+	sendStr("m3 v-1\n");
+}
+function onReleaseX(){
+	sendStr("m4 v1\n");
+}
+function onReleaseY(){
+	sendStr("m4 v-1\n");
+}
+function onRotateX(dir,face){
+	sendStr("m"+(5+face)+" v"+dir+"\n");
+}
+function onRotateY(dir,face){
+	sendStr("m"+(7+face)+" v"+dir+"\n");
+}
+function getCubeFace(action) {
+	sendStr(action+"\n");
+    return new Promise(function (resolve, reject) {
+        globalResolve = resolve;
+    });
+}
+function startCapture(){
+	getCubeFace("m3 v1").then(onCheckColor)
+	.then(function(){return getCubeFace("m2 v-1");}).then(onCheckColor)
+	.then(function(){return getCubeFace("m2 v-1");}).then(onCheckColor)
+	.then(function(){return getCubeFace("m2 v-1");}).then(onCheckColor)
+	.then(function(){return getCubeFace("m2 v-1");})
+	.then(function(){return getCubeFace("m1 v-1");}).then(onCheckColor)
+	.then(function(){return getCubeFace("m1 v-1");})
+	.then(function(){return getCubeFace("m1 v-1");}).then(onCheckColor);
+	
+}
+var convertStringToArrayBuffer=function(str) {
+	var buf=new ArrayBuffer(str.length);
+	var bufView=new Uint8Array(buf);
+	for (var i=0; i<str.length; i++) {
+		bufView[i]=str.charCodeAt(i);
+	}
+	return buf;
+}
+function serialList(){
+		$("#serialport").empty();
+	 chrome.serial.getDevices(function(ports){
+		for(var i=0;i<ports.length;i++){
+			var op = $('<option></option>').attr('value',ports[i].path).text(ports[i].displayName+" - "+ports[i].path);
+            $("#serialport").append(op);
+		}
+	 });  
+}
+
+function getPixel(x,y,pixels){
+	var i = (y*frameWidth+x)*4;
+	return [pixels[i],pixels[i+1],pixels[i+2]];
+}
+function getFaceCube(data,face,index){
+    return data[faces[face]*9+index];
+}
+function test(){
+	faceColors = ["b", "r", "g", "o", "y", "w"];
+	cubesResult = "roboboboyobggrgwwwygbygrbyoygrbobgyryrgryyorrowwbwwgww";
+	console.log(faceColors);
+	console.log(cubesResult);
+	for(var t=0;t<6;t++){
+	  cubesResult = cubesResult.split(faceColors[t]).join(faceNames[t]);
+	}
+	var cubes = cubesResult.split("");
+	console.log(cubes);
+	var states = [];
+	states.push(getFaceCube(cubes,"U",7)+getFaceCube(cubes,"F",1));
+	states.push(getFaceCube(cubes,"U",5)+getFaceCube(cubes,"R",3));
+	states.push(getFaceCube(cubes,"U",1)+getFaceCube(cubes,"B",7));
+	states.push(getFaceCube(cubes,"U",3)+getFaceCube(cubes,"L",5));
+	states.push(getFaceCube(cubes,"D",1)+getFaceCube(cubes,"F",7));
+	states.push(getFaceCube(cubes,"D",5)+getFaceCube(cubes,"R",5));
+	states.push(getFaceCube(cubes,"D",7)+getFaceCube(cubes,"B",1));
+	states.push(getFaceCube(cubes,"D",3)+getFaceCube(cubes,"L",3));
+	states.push(getFaceCube(cubes,"F",5)+getFaceCube(cubes,"R",7));
+	states.push(getFaceCube(cubes,"F",3)+getFaceCube(cubes,"L",7));
+	states.push(getFaceCube(cubes,"B",5)+getFaceCube(cubes,"R",1));
+	states.push(getFaceCube(cubes,"B",3)+getFaceCube(cubes,"L",1));
+	states.push(getFaceCube(cubes,"U",8)+getFaceCube(cubes,"F",2)+getFaceCube(cubes,"R",6));
+	states.push(getFaceCube(cubes,"U",2)+getFaceCube(cubes,"R",0)+getFaceCube(cubes,"B",8));
+	states.push(getFaceCube(cubes,"U",0)+getFaceCube(cubes,"B",6)+getFaceCube(cubes,"L",2));
+	states.push(getFaceCube(cubes,"U",6)+getFaceCube(cubes,"L",8)+getFaceCube(cubes,"F",0));
+	states.push(getFaceCube(cubes,"D",2)+getFaceCube(cubes,"R",8)+getFaceCube(cubes,"F",8));
+	states.push(getFaceCube(cubes,"D",0)+getFaceCube(cubes,"F",6)+getFaceCube(cubes,"L",6));
+	states.push(getFaceCube(cubes,"D",6)+getFaceCube(cubes,"L",0)+getFaceCube(cubes,"B",0));
+	states.push(getFaceCube(cubes,"D",8)+getFaceCube(cubes,"B",2)+getFaceCube(cubes,"R",2));
+	doSolve(states);
+	cubesResult = "";
+	faceIndex = 0;
+}
+function onCheckColor(){
+	stateIndex++;
+	var imageData = context.getImageData(0,0,frameWidth,frameHeight);
+	var pixels = imageData.data;
+	
+	var line = "";
+	for(var i=0;i<3;i++){
+		for(var j=0;j<3;j++){
+			var _rgb = [0,0,0];
+			for(var k=1;k<rw-1;k++){
+				for(var l=1;l<rw-1;l++){
+					var rgb = getPixel(sx+j*dw+k-i*lw,sy+i*dw+l+j*lw,pixels);
+					_rgb[0]+=rgb[0];
+					_rgb[1]+=rgb[1];
+					_rgb[2]+=rgb[2];
+				}
+			}
+			var r = _rgb[0]/len;
+			var g = _rgb[1]/len;
+			var b = _rgb[2]/len;
+			
+			var color =(getColor(getHSV(r,g,b)));//+" ";//+r+":"+g+":"+b+"\n";
+			if(i==1&&j==1){
+				faceColors[faceIndex] = color;
+			}
+			console.log(color," : ",getHSV(r,g,b)," : ",r,g,b);
+			cubesResult+=(color);
+		}
+		line+="\n";
+	}
+	faceIndex++;
+	if(faceIndex>=6){
+		console.log(faceColors);
+		console.log(cubesResult);
+		for(var t=0;t<6;t++){
+		  cubesResult = cubesResult.split(faceColors[t]).join(faceNames[t]);
+		}
+		var cubes = cubesResult.split("");
+		console.log(cubes);
+		var states = [];
+		states.push(getFaceCube(cubes,"U",7)+getFaceCube(cubes,"F",1));
+		states.push(getFaceCube(cubes,"U",5)+getFaceCube(cubes,"R",3));
+		states.push(getFaceCube(cubes,"U",1)+getFaceCube(cubes,"B",7));
+		states.push(getFaceCube(cubes,"U",3)+getFaceCube(cubes,"L",5));
+		states.push(getFaceCube(cubes,"D",1)+getFaceCube(cubes,"F",7));
+		states.push(getFaceCube(cubes,"D",5)+getFaceCube(cubes,"R",5));
+		states.push(getFaceCube(cubes,"D",7)+getFaceCube(cubes,"B",1));
+		states.push(getFaceCube(cubes,"D",3)+getFaceCube(cubes,"L",3));
+		states.push(getFaceCube(cubes,"F",5)+getFaceCube(cubes,"R",7));
+		states.push(getFaceCube(cubes,"F",3)+getFaceCube(cubes,"L",7));
+		states.push(getFaceCube(cubes,"B",5)+getFaceCube(cubes,"R",1));
+		states.push(getFaceCube(cubes,"B",3)+getFaceCube(cubes,"L",1));
+		states.push(getFaceCube(cubes,"U",8)+getFaceCube(cubes,"F",2)+getFaceCube(cubes,"R",6));
+		states.push(getFaceCube(cubes,"U",2)+getFaceCube(cubes,"R",0)+getFaceCube(cubes,"B",8));
+		states.push(getFaceCube(cubes,"U",0)+getFaceCube(cubes,"B",6)+getFaceCube(cubes,"L",2));
+		states.push(getFaceCube(cubes,"U",6)+getFaceCube(cubes,"L",8)+getFaceCube(cubes,"F",0));
+		states.push(getFaceCube(cubes,"D",2)+getFaceCube(cubes,"R",8)+getFaceCube(cubes,"F",8));
+		states.push(getFaceCube(cubes,"D",0)+getFaceCube(cubes,"F",6)+getFaceCube(cubes,"L",6));
+		states.push(getFaceCube(cubes,"D",6)+getFaceCube(cubes,"L",0)+getFaceCube(cubes,"B",0));
+		states.push(getFaceCube(cubes,"D",8)+getFaceCube(cubes,"B",2)+getFaceCube(cubes,"R",2));
+		doSolve(states);
+		cubesResult = "";
+		faceIndex = 0;
+	}else{
+	}
+}
+window.addEventListener("DOMContentLoaded", function() {
+	serialList();
+	var stringReceived = '';
+	var onReceiveCallback = function(info) {
+		if (info.connectionId == connectId && info.data) {
+		  var str = String.fromCharCode.apply(null, new Uint8Array(info.data));
+		  if (str.charAt(str.length-1) === '\n') {
+			stringReceived += str.substring(0, str.length-1);
+			if(commands.length>0){
+				var cmd = commands.shift();
+				getCubeFace(cmd);
+				isMoving = true;
+			}else{
+				if(isMoving==true){
+					isMoving = false;
+					console.log("finish:",new Date());
+					getCubeFace("m4 v1").then(function(){return getCubeFace("m4 v-1");});
+				}
+			}
+			onSerialReceived(stringReceived);
+			stringReceived = '';
+		  } else {
+			stringReceived += str;
+		  }
+		}
+	  };
+
+	chrome.serial.onReceive.addListener(onReceiveCallback);
+	canvas = document.getElementById("drawing");
+	context = canvas.getContext("2d");
+	video = document.getElementById("video");
+	navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia || navigator.oGetUserMedia;
+	if (navigator.getUserMedia) {       
+		navigator.getUserMedia({video: true}, handleVideo, videoError);
+	}
+	 
+	function handleVideo(stream) {
+		video.src = window.URL.createObjectURL(stream);
+		setTimeout(onCapture,2000);
+	}
+	 
+	function videoError(e) {
+		// do something
+	}
+	function onCapture(){
+		context.drawImage(video, 0, 0);
+		context.beginPath();
+		var line = "";
+		for(var i=0;i<3;i++){
+			for(var j=0;j<3;j++){
+				context.moveTo(sx+j*dw-dv-i*lw, sy+i*dw-dv+j*lw);
+				context.lineTo(sx+j*dw-dv-i*lw, sy+i*dw+rw+dv+j*lw);
+				context.lineTo(sx+j*dw+rw+dv-i*lw, sy+i*dw+rw+dv+j*lw);
+				context.lineTo(sx+j*dw+rw+dv-i*lw, sy+i*dw-dv+j*lw);
+				context.lineTo(sx+j*dw-dv-i*lw, sy+i*dw-dv+j*lw);
+			}
+		}
+		context.lineWidth = 1;
+		context.strokeStyle = '#ff0000';
+		context.stroke();
+		setTimeout(onCapture,50);
+	}
+}, false);
+function getColor(h){
+	if(h>140&&h<180){
+		return "g";
+	}
+	if(h>0&&h<44){
+		return "o";
+	}
+	if(h>45&&h<70){
+		return "y";
+	}
+	if(h>190&&h<240){
+		return "b";
+	}
+	if(h>300&&h<360){
+		return "r";
+	}
+	return "w";
+}
+function getHSV(r,g,b){
+	var cv = 2;
+	r = Math.floor(r/cv)*cv;
+	g = Math.floor(g/cv)*cv;
+	b = Math.floor(b/cv)*cv;
+	var max_c = Math.max(r,Math.max(g,b));
+	var min_c = Math.min(r,Math.min(g,b));
+	if(max_c==min_c){
+		h = 0;
+	}else if(r==max_c){
+		if(g>=b){
+			h = 60*(g-b)/(max_c-min_c);
+		}else{
+			h = 60*(g-b)/(max_c-min_c)+360;
+		}
+	}else if(g==max_c){
+		h = 60*(b-r)/(max_c-min_c)+120;
+	}else if(b==max_c){
+		h = 60*(r-g)/(max_c-min_c)+240;
+	}
+	return h;
+}
+function doSolve(states){
+	var solver = new RubiksCubeSolver();
+	solver.setState(states.join(" "));
+	var output = solver.solve();
+	if(output!=false){
+		console.log(output);
+		var list = output.split(" ");
+		commands = [];
+		for(var i=0;i < list.length;i++){
+			commands = commands.concat(commandsAction[list[i]].split("\n"));
+		}
+		getCubeFace("m1 v-1");
+		console.log("starting:",new Date());
+	}else{
+		console.log("solver failed:",states.join(" "));
+	}
+}
+</script>
+</body>
+</html>
