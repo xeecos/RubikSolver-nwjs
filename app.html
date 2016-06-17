@@ -25,11 +25,11 @@ var Promise = require('promise');
 var RubiksCubeSolver = require("./lib/solver");
 var frameWidth = 640;
 var frameHeight = 480;
-var sx = 306;
-var sy = 148;
-var dw = 40;
-var rw = 4;
-var lw = 52;
+var sx = 260;
+var sy = 190;
+var dw = 65;
+var lw = 0;
+var rw = 3;
 var dv = rw;
 var len = rw*rw;
 var canvas;
@@ -275,7 +275,7 @@ window.addEventListener("DOMContentLoaded", function() {
 			}else{
 				if(isMoving==true){
 					isMoving = false;
-					console.log("finish:",new Date());
+					$("#result").html("finish:"+new Date());
 					getCubeFace("m4 v1").then(function(){return getCubeFace("m4 v-1");});
 				}
 			}
@@ -375,9 +375,9 @@ function doSolve(states){
 			commands = commands.concat(commandsAction[list[i]].split("\n"));
 		}
 		getCubeFace("m1 v-1");
-		console.log("starting:",new Date());
+		$("#result").html("starting:"+new Date());
 	}else{
-		console.log("solver failed:",states.join(" "));
+		$("#result").html("solver failed:"+states.join(" "));
 	}
 }
 </script>
