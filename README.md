@@ -1,0 +1,1 @@
+# RubikSolver-nwjs
