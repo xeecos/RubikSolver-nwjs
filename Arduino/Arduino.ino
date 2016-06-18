@@ -4,10 +4,10 @@ uint8_t _servoPins[8] = {A8,A10,A12,A14,A9,A11,A13,A15};
 
 Servo servos[8] = {Servo(),Servo(),Servo(),Servo(),Servo(),Servo(),Servo(),Servo()};
 String received = "";
-int releaseAngle = 62;
+int releaseAngle = 55;
 int holdAngle = 105;
-int actionTime = 250;
-int motionTime = 200;
+int actionTime = 300;
+int motionTime = 300;
 void setup() {
   Serial.begin(115200);
   Serial2.begin(115200);

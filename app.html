@@ -198,7 +198,6 @@ function onCheckColor(){
 	stateIndex++;
 	var imageData = context.getImageData(0,0,frameWidth,frameHeight);
 	var pixels = imageData.data;
-	
 	var line = "";
 	for(var i=0;i<3;i++){
 		for(var j=0;j<3;j++){
@@ -225,6 +224,7 @@ function onCheckColor(){
 		line+="\n";
 	}
 	faceIndex++;
+	$("#result").html(""+faceIndex);
 	if(faceIndex>=6){
 		console.log(faceColors);
 		console.log(cubesResult);
@@ -324,19 +324,19 @@ window.addEventListener("DOMContentLoaded", function() {
 	}
 }, false);
 function getColor(h){
-	if(h>140&&h<180){
-		return "g";
-	}
 	if(h>0&&h<44){
 		return "o";
 	}
-	if(h>45&&h<70){
+	if(h>45&&h<100){
 		return "y";
 	}
-	if(h>190&&h<240){
+	if(h>120&&h<180){
+		return "g";
+	}
+	if(h>190&&h<260){
 		return "b";
 	}
-	if(h>300&&h<360){
+	if(h>280&&h<360){
 		return "r";
 	}
 	return "w";
