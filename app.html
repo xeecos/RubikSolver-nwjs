@@ -16,8 +16,29 @@
 		<canvas id="drawing" width="640px" height="480px" style="z-index:1;margin:0 0;width:640px;height:480px;"></canvas>
     </div>
     <p><label for="serialport" style="display:inline-block">Serial Port:</label>
-      <select id="serialport" style="width:100px"></select> <button id="connectBt" onClick="onConnect();">Connect</button>   <label style="display:inline-block">GCode:</label>
-      <input id="inputgcode" style="width:200px" type="input" value="M1 V1"></input> <button id="sendgcode" onClick="onSend();">Send</button><button id="capture" onClick="onCheckColor();">Capture</button><button onClick="onFlipX(1);">FlipX+1</button><button onClick="onFlipX(-1);">FlipX-1</button><button onClick="onFlipY(1);">FlipY+1</button><button onClick="onFlipY(-1);">FlipY-1</button><button onClick="onHoldX();">HoldX</button><button onClick="onReleaseX();">ReleaseX</button><button onClick="onHoldY();">HoldY</button><button onClick="onReleaseY();">ReleaseY</button><button onClick="onRotateX(1,0);">Rotate Front+1</button><button onClick="onRotateX(-1,0);">Rotate Front-1</button><button onClick="onRotateX(1,1);">Rotate Back+1</button><button onClick="onRotateX(-1,1);">Rotate Back-1</button><button onClick="onRotateY(1,0);">Rotate Left+1</button><button onClick="onRotateY(-1,0);">Rotate Left-1</button><button onClick="onRotateY(1,1);">Rotate Right+1</button><button onClick="onRotateY(-1,1);">Rotate Right-1</button><button onClick="startCapture();">Start Capture</button><button onClick="test();">Start Test</button></p>
+      <select id="serialport" style="width:100px"></select> 
+	  <button id="connectBt" onClick="onConnect();">Connect</button>   <label style="display:inline-block">GCode:</label>
+      <input id="inputgcode" style="width:200px" type="input" value="M1 V1"></input> <button id="sendgcode" onClick="onSend();">Send</button>
+	  <br/><br/>
+	  <button onClick="onFlipX(1);">FlipX+1</button>
+	  <button onClick="onFlipX(-1);">FlipX-1</button>
+	  <button onClick="onFlipY(1);">FlipY+1</button>
+	  <button onClick="onFlipY(-1);">FlipY-1</button>
+	  <button id="capture" onClick="onCheckColor();">Capture</button><br/><br/>
+	  <button onClick="onHoldX();">HoldX</button>
+	  <button onClick="onHoldY();">HoldY</button>
+	  <button onClick="onReleaseX();">ReleaseX</button>
+	  <button onClick="onReleaseY();">ReleaseY</button><br/><br/>
+	  <!--<button onClick="onRotateX(1,0);">Rotate Front+1</button>
+	  <button onClick="onRotateX(-1,0);">Rotate Front-1</button>
+	  <button onClick="onRotateX(1,1);">Rotate Back+1</button>
+	  <button onClick="onRotateX(-1,1);">Rotate Back-1</button>
+	  <button onClick="onRotateY(1,0);">Rotate Left+1</button>
+	  <button onClick="onRotateY(-1,0);">Rotate Left-1</button>
+	  <button onClick="onRotateY(1,1);">Rotate Right+1</button>
+	  <button onClick="onRotateY(-1,1);">Rotate Right-1</button><br/>--> <button onClick="startCapture();">Start Capture</button>
+	  <!--<button onClick="test();">Start Test</button>-->
+	  </p>
     <div id="result"></div>
 </div>
 <script>
@@ -25,13 +46,13 @@ var Promise = require('promise');
 var RubiksCubeSolver = require("./lib/solver");
 var frameWidth = 640;
 var frameHeight = 480;
-var sx = 260;
-var sy = 190;
-var dw = 65;
+var sx = 260-14;
+var sy = 190-14;
+var dw = 65+8;
 var lw = 0;
-var rw = 3;
+var rw = 6;
 var dv = rw;
-var len = rw*rw;
+var len = (rw-4)*(rw-4);
 var canvas;
 var context;
 var video;
@@ -202,8 +223,8 @@ function onCheckColor(){
 	for(var i=0;i<3;i++){
 		for(var j=0;j<3;j++){
 			var _rgb = [0,0,0];
-			for(var k=1;k<rw-1;k++){
-				for(var l=1;l<rw-1;l++){
+			for(var k=2;k<rw-2;k++){
+				for(var l=2;l<rw-2;l++){
 					var rgb = getPixel(sx+j*dw+k-i*lw,sy+i*dw+l+j*lw,pixels);
 					_rgb[0]+=rgb[0];
 					_rgb[1]+=rgb[1];
@@ -218,12 +239,13 @@ function onCheckColor(){
 			if(i==1&&j==1){
 				faceColors[faceIndex] = color;
 			}
-			console.log(color," : ",getHSV(r,g,b)," : ",r,g,b);
+			console.log(color," : ",getHSV(r,g,b));
 			cubesResult+=(color);
 		}
 		line+="\n";
 	}
 	faceIndex++;
+	console.log("\n\n\n"+faceIndex+"\n\n\n");
 	$("#result").html(""+faceIndex);
 	if(faceIndex>=6){
 		console.log(faceColors);
@@ -298,7 +320,7 @@ window.addEventListener("DOMContentLoaded", function() {
 	 
 	function handleVideo(stream) {
 		video.src = window.URL.createObjectURL(stream);
-		setTimeout(onCapture,2000);
+		setTimeout(onCapture,20);
 	}
 	 
 	function videoError(e) {
@@ -342,19 +364,24 @@ function getColor(h){
 	return "w";
 }
 function getHSV(r,g,b){
-	var cv = 2;
+	var cv = 3;
+	var h = 0;
 	r = Math.floor(r/cv)*cv;
 	g = Math.floor(g/cv)*cv;
 	b = Math.floor(b/cv)*cv;
 	var max_c = Math.max(r,Math.max(g,b));
 	var min_c = Math.min(r,Math.min(g,b));
-	if(max_c==min_c){
+	console.log(r,g,b);
+	if(max_c==min_c||min_c>190){
 		h = 0;
 	}else if(r==max_c){
-		if(g>=b){
+		if(g>=b&&g>50){
 			h = 60*(g-b)/(max_c-min_c);
 		}else{
 			h = 60*(g-b)/(max_c-min_c)+360;
+		}
+		if(g<50&&b<50){
+			h=350;
 		}
 	}else if(g==max_c){
 		h = 60*(b-r)/(max_c-min_c)+120;
