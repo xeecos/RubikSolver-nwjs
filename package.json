@@ -4,7 +4,7 @@
   "window": {
     "frame": true,
     "transparent": false,
-    "width":640,
+    "width":1024,
     "height":640,
     "resizable":false
   },

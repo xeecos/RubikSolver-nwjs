@@ -10,47 +10,66 @@
   <script src="js/jquery-1.12.3.min.js"></script>
 </head>
 <body style="width: 100%; height: 100%;">
-<div style="margin:0 auto;width:640px;">
-    <div style="margin:0px auto 0 auto;width:640px;height:480px;z-index:2;">
-        <video id="video" width="640px" height="480px" autoplay style="margin:0px auto;width:640px;height:480px;display:none;"></video>
-		<canvas id="drawing" width="640px" height="480px" style="z-index:1;margin:0 0;width:640px;height:480px;"></canvas>
+    <div style="display:block;float:right;width:380px;height:480px;position:absolute;top:0px;left:650px;">
+		<img src="assets/images/hold.jpg" id="face-back" width="120" height="120" style="position:absolute;top:0px;left:125px;"/>
+		<img src="assets/images/hold.jpg" id="face-up" width="120" height="120" style="position:absolute;top:125px;left:125px;"/>
+		<img src="assets/images/hold.jpg" id="face-left" width="120" height="120" style="position:absolute;top:125px;left:0px;"/>
+		<img src="assets/images/hold.jpg" id="face-right" width="120" height="120" style="position:absolute;top:125px;left:250px;"/>
+		<img src="assets/images/hold.jpg" id="face-front" width="120" height="120" style="position:absolute;top:250px;left:125px;"/>
+		<img src="assets/images/hold.jpg" id="face-down" width="120" height="120" style="position:absolute;top:375px;left:125px;"/>
+		<div style="position:absolute;top:15px;left:20px;">
+			<div  id="text-back" style="position:absolute;top:0px;left:125px;font-family:Lucida Console;line-height:24px">back</div>
+			<div  id="text-up" style="position:absolute;top:125px;left:125px;font-family:Lucida Console;line-height:24px">up</div>
+			<div  id="text-left" style="position:absolute;top:125px;left:0px;font-family:Lucida Console;line-height:24px">left</div>
+			<div  id="text-right" style="position:absolute;top:125px;left:250px;font-family:Lucida Console;line-height:24px">right</div>
+			<div  id="text-front" style="position:absolute;top:250px;left:125px;font-family:Lucida Console;line-height:24px">front</div>
+			<div  id="text-down" style="position:absolute;top:375px;left:125px;font-family:Lucida Console;line-height:24px">down</div>
+		</div>
+		<textarea id="result" rows="8" cols="50" readonly style="resize:none;position:absolute;top:500px;left:0px;"></textarea>
+		
+		<canvas id="resize-drawing" width="10px" height="10px" style="position:absolute;top:500px;left:125px;"></canvas>
     </div>
-    <p><label for="serialport" style="display:inline-block">Serial Port:</label>
-      <select id="serialport" style="width:100px"></select> 
-	  <button id="connectBt" onClick="onConnect();">Connect</button>   <label style="display:inline-block">GCode:</label>
-      <input id="inputgcode" style="width:200px" type="input" value="M1 V1"></input> <button id="sendgcode" onClick="onSend();">Send</button>
-	  <br/><br/>
-	  <button onClick="onFlipX(1);">FlipX+1</button>
-	  <button onClick="onFlipX(-1);">FlipX-1</button>
-	  <button onClick="onFlipY(1);">FlipY+1</button>
-	  <button onClick="onFlipY(-1);">FlipY-1</button>
-	  <button id="capture" onClick="onCheckColor();">Capture</button><br/><br/>
-	  <button onClick="onHoldX();">HoldX</button>
-	  <button onClick="onHoldY();">HoldY</button>
-	  <button onClick="onReleaseX();">ReleaseX</button>
-	  <button onClick="onReleaseY();">ReleaseY</button><br/><br/>
-	  <!--<button onClick="onRotateX(1,0);">Rotate Front+1</button>
-	  <button onClick="onRotateX(-1,0);">Rotate Front-1</button>
-	  <button onClick="onRotateX(1,1);">Rotate Back+1</button>
-	  <button onClick="onRotateX(-1,1);">Rotate Back-1</button>
-	  <button onClick="onRotateY(1,0);">Rotate Left+1</button>
-	  <button onClick="onRotateY(-1,0);">Rotate Left-1</button>
-	  <button onClick="onRotateY(1,1);">Rotate Right+1</button>
-	  <button onClick="onRotateY(-1,1);">Rotate Right-1</button><br/>--> <button onClick="startCapture();">Start Capture</button>
-	  <!--<button onClick="test();">Start Test</button>-->
-	  </p>
-    <div id="result"></div>
-</div>
+	<div style="display:block;float:left;width:640px;margin-left:5px;">
+		<div style="margin:0px auto 0 auto;width:640px;height:480px;z-index:2;">
+			<video id="video" width="640px" height="480px" autoplay style="margin:0px auto;width:640px;height:480px;display:none;"></video>
+			<canvas id="drawing" width="640px" height="480px" style="z-index:1;margin:0 0;width:640px;height:480px;"></canvas>
+		</div>
+
+		<p><label for="serialport" style="display:inline-block">Serial Port:</label>
+		<select id="serialport" style="width:100px"></select> 
+		<button id="connectBt" onClick="onConnect();">Connect</button>   <label style="display:inline-block">GCode:</label>
+		<input id="inputgcode" style="width:200px" type="input" value="M1 V1"></input> <button id="sendgcode" onClick="onSend();">Send</button>
+		<br/><br/>
+		<button onClick="onFlipX(1);">FlipX+1</button>
+		<button onClick="onFlipX(-1);">FlipX-1</button>
+		<button onClick="onFlipY(1);">FlipY+1</button>
+		<button onClick="onFlipY(-1);">FlipY-1</button>
+		<button id="capture" onClick="onCheckColor();">Capture</button><br/><br/>
+		<button onClick="onHoldX();">HoldX</button>
+		<button onClick="onHoldY();">HoldY</button>
+		<button onClick="onReleaseX();">ReleaseX</button>
+		<button onClick="onReleaseY();">ReleaseY</button><br/><br/> <button onClick="startCapture();">Start Capture</button>
+		<button onClick="onRotateX(1,0);">Rotate Front+1</button>
+		<button onClick="onRotateX(-1,0);">Rotate Front-1</button>
+		<button onClick="onRotateX(1,1);">Rotate Back+1</button>
+		<button onClick="onRotateX(-1,1);">Rotate Back-1</button>
+		<button onClick="onRotateY(1,0);">Rotate Left+1</button>
+		<button onClick="onRotateY(-1,0);">Rotate Left-1</button>
+		<button onClick="onRotateY(1,1);">Rotate Right+1</button>
+		<button onClick="onRotateY(-1,1);">Rotate Right-1</button><br/>
+			<!--<button onClick="test();">Start Test</button>-->
+		</p>
+	</div>
 <script>
 var Promise = require('promise');
 var RubiksCubeSolver = require("./lib/solver");
 var frameWidth = 640;
 var frameHeight = 480;
-var sx = 260-14;
-var sy = 190-14;
-var dw = 65+8;
+var sx = 260-12;
+var sy = 190-8;
+var dw = 65+2;
 var lw = 0;
-var rw = 6;
+var rw = 7;
 var dv = rw;
 var len = (rw-4)*(rw-4);
 var canvas;
@@ -61,38 +80,45 @@ var cubesResult = "";
 var faceIndex = 0;
 var stateIndex = 0;
 var faceColors = [];
+var totalColors = [];
 var faceNames = ["U","B","D","F","L","R"];
+var colorNames = ["b", "r", "g", "o", "y", "w"];
+var objNames = {b:"U", r:"B", g:"D", o:"F", y:"L", w:"R"};
 var faces = {U:0,B:1,D:2,F:3,L:4,R:5};
 var connectId = -1;
 var commands = [];
+var totalCommands;
 var commandsAction = {};
 var globalResolve = function(){};
 commandsAction["U"]="m2 v-1\nm5 v1\nm2 v1";
 commandsAction["U'"]="m2 v-1\nm5 v-1\nm2 v1";
-commandsAction["F"]="m5 v1";
-commandsAction["F'"]="m5 v-1";
+commandsAction["F"]="m6 v1";
+commandsAction["F'"]="m6 v-1";
 commandsAction["D"]="m2 v-1\nm6 v1\nm2 v1";
 commandsAction["D'"]="m2 v-1\nm6 v-1\nm2 v1";
-commandsAction["B"]="m6 v1";
-commandsAction["B'"]="m6 v-1";
-commandsAction["L"]="m7 v1";
-commandsAction["L'"]="m7 v-1";
-commandsAction["R"]="m8 v1";
-commandsAction["R'"]="m8 v-1";
+commandsAction["B"]="m5 v1";
+commandsAction["B'"]="m5 v-1";
+commandsAction["L"]="m8 v1";
+commandsAction["L'"]="m8 v-1";
+commandsAction["R"]="m7 v1";
+commandsAction["R'"]="m7 v-1";
 commandsAction["U2"]="m2 v-1\nm5 v2\nm2 v1";
-commandsAction["F2"]="m5 v2";
+commandsAction["F2"]="m6 v-2";
 commandsAction["D2"]="m2 v-1\nm6 v2\nm2 v1";
-commandsAction["B2"]="m6 v2";
-commandsAction["L2"]="m7 v2";
-commandsAction["R2"]="m8 v2";
+commandsAction["B2"]="m5 v2";
+commandsAction["L2"]="m8 v2";
+commandsAction["R2"]="m7 v2";
 function startSolver(){
 }
 function onConnect(){
 	if($("#connectBt").html()=="Disconnect"){
-		chrome.serial.disconnect(connectId,function(result){
-			connectId = -1;
-			$("#connectBt").html("Connect");
-		});
+		sendStr("m9 v-1\n");
+		setTimeout(function(){
+			chrome.serial.disconnect(connectId,function(result){
+				connectId = -1;
+				$("#connectBt").html("Connect");
+			});
+		},2000);
 		return;
 	}
     var port = $("#serialport option:selected" ).val();
@@ -100,6 +126,9 @@ function onConnect(){
 	chrome.serial.connect(port, {bitrate: 115200},  function(connectionInfo) {
 		connectId = connectionInfo.connectionId;
 		$("#connectBt").html("Disconnect");
+		setTimeout(function(){
+			sendStr("m9 v1\n");
+		},2000);
 	});
 }
 function onSend(){
@@ -127,9 +156,11 @@ function onHoldY(){
 	sendStr("m3 v-1\n");
 }
 function onReleaseX(){
+	commands = [];
 	sendStr("m4 v1\n");
 }
 function onReleaseY(){
+	commands = [];
 	sendStr("m4 v-1\n");
 }
 function onRotateX(dir,face){
@@ -146,13 +177,13 @@ function getCubeFace(action) {
 }
 function startCapture(){
 	getCubeFace("m3 v1").then(onCheckColor)
-	.then(function(){return getCubeFace("m2 v-1");}).then(onCheckColor)
-	.then(function(){return getCubeFace("m2 v-1");}).then(onCheckColor)
-	.then(function(){return getCubeFace("m2 v-1");}).then(onCheckColor)
-	.then(function(){return getCubeFace("m2 v-1");})
-	.then(function(){return getCubeFace("m1 v-1");}).then(onCheckColor)
-	.then(function(){return getCubeFace("m1 v-1");})
-	.then(function(){return getCubeFace("m1 v-1");}).then(onCheckColor);
+	.then(function(){return getCubeFace("m2 v1");}).then(onCheckColor)
+	.then(function(){return getCubeFace("m2 v1");}).then(onCheckColor)
+	.then(function(){return getCubeFace("m2 v1");}).then(onCheckColor)
+	.then(function(){return getCubeFace("m2 v1");})
+	.then(function(){return getCubeFace("m1 v1");}).then(onCheckColor)
+	.then(function(){return getCubeFace("m1 v1");})
+	.then(function(){return getCubeFace("m1 v1");}).then(onCheckColor);
 	
 }
 var convertStringToArrayBuffer=function(str) {
@@ -180,9 +211,12 @@ function getPixel(x,y,pixels){
 function getFaceCube(data,face,index){
     return data[faces[face]*9+index];
 }
+
 function test(){
 	faceColors = ["b", "r", "g", "o", "y", "w"];
-	cubesResult = "roboboboyobggrgwwwygbygrbyoygrbobgyryrgryyorrowwbwwgww";
+	cubesResult = "roboboboyobggrgwwwygbygrbyoygrbobgyryrgryyorrowwbwwgww";//"roboboboyobggrgwwwygbygrbyoygrbobgyryrgryyorrowwbwwgww";
+	/*
+	*/
 	console.log(faceColors);
 	console.log(cubesResult);
 	for(var t=0;t<6;t++){
@@ -215,10 +249,23 @@ function test(){
 	cubesResult = "";
 	faceIndex = 0;
 }
+var facesImg = ["#face-up","#face-back","#face-down","#face-front","#face-left","#face-right"];
+var facesText = ["#text-up","#text-back","#text-down","#text-front","#text-left","#text-right"];
+ function resizeImage(image_target,width, height){
+	 var resize_canvas = document.getElementById("resize-drawing");
+    resize_canvas.width = width;
+    resize_canvas.height = height;
+    resize_canvas.getContext('2d').drawImage(video, sx-50,sy-50,width,height,0, 0, width, height);   
+	var d = new Date();
+    $(image_target).removeAttr("src").attr('src', resize_canvas.toDataURL("image/png"));  
+    resize_canvas.width = 1;
+    resize_canvas.height = 1;
+};
 function onCheckColor(){
 	stateIndex++;
 	var imageData = context.getImageData(0,0,frameWidth,frameHeight);
 	var pixels = imageData.data;
+	resizeImage(facesImg[faceIndex], 240, 240);   
 	var line = "";
 	for(var i=0;i<3;i++){
 		for(var j=0;j<3;j++){
@@ -234,27 +281,40 @@ function onCheckColor(){
 			var r = _rgb[0]/len;
 			var g = _rgb[1]/len;
 			var b = _rgb[2]/len;
-			
-			var color =(getColor(getHSV(r,g,b)));//+" ";//+r+":"+g+":"+b+"\n";
+			totalColors.push([r,g,b]);
 			if(i==1&&j==1){
-				faceColors[faceIndex] = color;
+				faceColors[faceIndex] = [r,g,b];//color;
+				console.log("color : ",r,g,b);
 			}
-			console.log(color," : ",getHSV(r,g,b));
-			cubesResult+=(color);
 		}
 		line+="\n";
 	}
 	faceIndex++;
-	console.log("\n\n\n"+faceIndex+"\n\n\n");
-	$("#result").html(""+faceIndex);
+	$("#result").html(""+facesImg[faceIndex-1]);
 	if(faceIndex>=6){
-		console.log(faceColors);
-		console.log(cubesResult);
+		// for(var i=0;i<6;i++){
+		// 	colorNames[i] = getColorName(getHSV(faceColors[i][0],faceColors[i][1],faceColors[i][2]));
+		// }
+		for(var i=0;i<totalColors.length;i++){
+			totalColors[i] = getColor(totalColors[i]);
+		}
+		for(var i=0;i<6;i++){
+			var str = "";
+			for(var j=0;j<9;j++){
+				str+=("<span style='position:absolute;top:"+Math.floor(j/3)*35+"px;left:"+Math.floor(j%3)*35+"px;'>"+objNames[totalColors[i*9+j]]+"</span>");
+			}
+			$(facesText[i]).html(str);
+		}
+		cubesResult = totalColors.join("");
+		console.log("cubesResult:",cubesResult);
+		for(var i=0;i<6;i++){
+			console.log(colorNames[i]+":",cubesResult.split(colorNames[i]).length-1);
+		}
 		for(var t=0;t<6;t++){
-		  cubesResult = cubesResult.split(faceColors[t]).join(faceNames[t]);
+		  cubesResult = cubesResult.split(colorNames[t]).join(faceNames[t]);
 		}
 		var cubes = cubesResult.split("");
-		console.log(cubes);
+		
 		var states = [];
 		states.push(getFaceCube(cubes,"U",7)+getFaceCube(cubes,"F",1));
 		states.push(getFaceCube(cubes,"U",5)+getFaceCube(cubes,"R",3));
@@ -276,10 +336,13 @@ function onCheckColor(){
 		states.push(getFaceCube(cubes,"D",0)+getFaceCube(cubes,"F",6)+getFaceCube(cubes,"L",6));
 		states.push(getFaceCube(cubes,"D",6)+getFaceCube(cubes,"L",0)+getFaceCube(cubes,"B",0));
 		states.push(getFaceCube(cubes,"D",8)+getFaceCube(cubes,"B",2)+getFaceCube(cubes,"R",2));
+		console.log("cubes:",states);
 		doSolve(states);
 		cubesResult = "";
 		faceIndex = 0;
+		totalColors = [];
 	}else{
+		$(facesText[faceIndex-1]).html(facesText[faceIndex-1].split("-")[1]);
 	}
 }
 window.addEventListener("DOMContentLoaded", function() {
@@ -292,6 +355,7 @@ window.addEventListener("DOMContentLoaded", function() {
 			stringReceived += str.substring(0, str.length-1);
 			if(commands.length>0){
 				var cmd = commands.shift();
+				$("#result").html((totalCommands-commands.length)+"/"+totalCommands+":"+cmd);
 				getCubeFace(cmd);
 				isMoving = true;
 			}else{
@@ -346,6 +410,27 @@ window.addEventListener("DOMContentLoaded", function() {
 	}
 }, false);
 function getColor(h){
+	var minDist;
+	var minIndex = 0;
+	for(var i=0;i<faceColors.length;i++){
+		var dR = h[0]-faceColors[i][0];
+		var dG = h[1]-faceColors[i][1];
+		var dB = h[2]-faceColors[i][2];
+		var dist = dR*dR+dG*dG+dB*dB;
+		if(i==0){
+			minDist = dist;
+		}
+		if(Math.abs(dR)>90||Math.abs(dG)>90||Math.abs(dB)>90){
+			continue;
+		}
+		if(dist<minDist){
+			minDist = dist;
+			minIndex = i;
+		}
+	}
+	return colorNames[minIndex];
+}
+function getColorName(h){
 	if(h>0&&h<36){
 		return "o";
 	}
@@ -371,7 +456,6 @@ function getHSV(r,g,b){
 	b = Math.floor(b/cv)*cv;
 	var max_c = Math.max(r,Math.max(g,b));
 	var min_c = Math.min(r,Math.min(g,b));
-	console.log(r,g,b);
 	if(max_c==min_c||min_c>170){
 		h = 0;
 	}else if(r==max_c){
@@ -380,7 +464,7 @@ function getHSV(r,g,b){
 		}else{
 			h = 60*(g-b)/(max_c-min_c)+360;
 		}
-		if(g<50&&b<50){
+		if(g<70&&b<70){
 			h=350;
 		}
 	}else if(g==max_c){
@@ -401,8 +485,9 @@ function doSolve(states){
 		for(var i=0;i < list.length;i++){
 			commands = commands.concat(commandsAction[list[i]].split("\n"));
 		}
-		getCubeFace("m1 v-1");
+		getCubeFace("m1 v1");
 		$("#result").html("starting:"+new Date());
+		totalCommands = commands.length;
 	}else{
 		$("#result").html("solver failed:"+states.join(" "));
 	}

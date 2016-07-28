@@ -4,77 +4,76 @@ uint8_t _servoPins[8] = {A8,A10,A12,A14,A9,A11,A13,A15};
 
 Servo servos[8] = {Servo(),Servo(),Servo(),Servo(),Servo(),Servo(),Servo(),Servo()};
 String received = "";
+float angles[8] = {90,90,90,90,90,90,90,90};
 int releaseAngle = 55;
-int holdAngle = 105;
-int actionTime = 300;
-int motionTime = 300;
+int holdAngle = 108;
+int actionTime = 200;
+int motionTime = 200;
 void setup() {
+  disableServos();
   Serial.begin(115200);
   Serial2.begin(115200);
-  delay(100);
-  enableServos();
+  delay(1000);
+  disableServos();
 }
 void disableServos(){
   for(uint8_t i=0;i<8;i++){
+    servos[i].attach(_servoPins[i]);
+    delay(100);
     servos[i].detach();
+    pinMode(_servoPins[i],OUTPUT);
+    digitalWrite(_servoPins[i],HIGH);
   }
 }
 void enableServos(){
   for(uint8_t i=0;i<8;i++){
     servos[i].attach(_servoPins[i]);
-    servos[i].write(i<4?90:releaseAngle);
+    moveTo(i,i<4?90:releaseAngle);
     delay(motionTime-100);
   }
   delay(motionTime);
-  servos[0].write(90);
+  moveTo(0,90);
   delay(motionTime);
-  servos[1].write(90);
+  moveTo(1,90);
   delay(motionTime);
-  servos[2].write(90);
+  moveTo(2,90);
   delay(motionTime);
-  servos[3].write(90);
+  moveTo(3,90);
   delay(motionTime);
 }
 void flipX(int dir){
   releaseY();
   delay(motionTime);
-  servos[1].write(0);
-  servos[3].write(180);
+  moveTo2(1,0,3,180);
   delay(motionTime+200);
   holdX();
   delay(motionTime);
   if(dir==1){
-    servos[0].write(0);
-    servos[2].write(180);
+    moveTo2(0,0,2,180);
   }else{
-    servos[0].write(180);
-    servos[2].write(0);
+    moveTo2(0,180,2,0);
   }
   delay(motionTime+200);
   holdY();
   delay(motionTime);
   releaseX();
   delay(motionTime);
-  servos[0].write(90);
-  servos[2].write(90);
+  moveTo2(0,90,2,90);
   delay(motionTime+200);
   holdX();
   delay(motionTime);
   releaseY();
   delay(motionTime);
-  servos[1].write(90);
-  servos[3].write(90);
+  moveTo2(1,90,3,90);
   delay(motionTime+200);
   holdY();
   delay(motionTime);
 }
 void holdX(){
-  servos[4].write(holdAngle-4);
-  servos[6].write(holdAngle+4);
+  moveTo2(4,holdAngle-6-2,6,holdAngle+6-2);
 }
 void releaseX(){
-  servos[4].write(releaseAngle);
-  servos[6].write(releaseAngle);
+  moveTo2(4,releaseAngle,6,releaseAngle);
 }
 
 void flipY(int dir){
@@ -83,30 +82,25 @@ void flipY(int dir){
   holdY();
   delay(motionTime);
   if(dir==1){
-    servos[1].write(0);
-    servos[3].write(180);
+    moveTo2(1,0,3,180);
   }else{
-    servos[1].write(180);
-    servos[3].write(0);
+    moveTo2(1,180,3,0);
   }
   delay(motionTime+200);
   holdX();
   delay(motionTime);
   releaseY();
   delay(motionTime);
-  servos[1].write(90);
-  servos[3].write(90);
+  moveTo2(1,90,3,90);
   delay(motionTime+200);
   holdY();
   delay(motionTime);
 }
 void holdY(){
-  servos[5].write(holdAngle-4);
-  servos[7].write(holdAngle+4);
+  moveTo2(5,holdAngle-4,7,holdAngle+4);
 }
 void releaseY(){
-  servos[5].write(releaseAngle);
-  servos[7].write(releaseAngle);
+  moveTo2(5,releaseAngle,7,releaseAngle);
 }
 void rotateX(int dir,int face){
   int count = dir>0?dir:-dir;
@@ -114,29 +108,27 @@ void rotateX(int dir,int face){
   delay(motionTime);
   releaseY();
   delay(motionTime);
-  servos[1].write(0);
-  servos[3].write(180);
+  moveTo2(1,0,3,180);
   delay(motionTime+100);
   for(int i=0;i<count;i++){
     holdY();
     delay(motionTime);
-    servos[face==1?0:2].write(dir>0?180:0);
+    moveTo(face==1?0:2,dir>0?180:0);
     delay(motionTime+300);
-    servos[face==1?4:6].write(releaseAngle);
+    moveTo(face==1?4:6,releaseAngle);
     delay(motionTime+100);
-    servos[face==1?0:2].write(90);
+    moveTo(face==1?0:2,90);
     delay(motionTime+100);
     holdX();
     delay(motionTime);
   }
-  servos[face==1?0:2].write(dir>0?102:76);
-  delay(motionTime);
-  servos[face==1?0:2].write(90);
+  moveTo(face==1?0:2,dir>0?120:60);
+  moveTo(face==1?0:2,dir>0?70:110);
+  moveTo(face==1?0:2,90);
   delay(motionTime);
   releaseY();
   delay(motionTime);
-  servos[1].write(90);
-  servos[3].write(90);
+  moveTo2(1,90,3,90);
   delay(motionTime);
   holdY();
   delay(motionTime);
@@ -147,19 +139,45 @@ void rotateY(int dir,int face){
   holdY();
   delay(motionTime);
   for(int i=0;i<count;i++){
-    servos[face==1?1:3].write(dir>0?180:0);
+    moveTo(face==1?1:3,dir>0?180:0);
     delay(motionTime+300);
-    servos[face==1?5:7].write(releaseAngle);
+    moveTo(face==1?5:7,releaseAngle);
     delay(motionTime+100);
-    servos[face==1?1:3].write(90);
+    moveTo(face==1?1:3,90);
     delay(motionTime+300);
     holdY();
     delay(motionTime);
   }
-  servos[face==1?1:3].write(dir>0?102:75);
+  moveTo(face==1?1:3,dir>0?120:60);
+  moveTo(face==1?1:3,dir>0?70:110);
+  moveTo(face==1?1:3,90);
   delay(motionTime);
-  servos[face==1?1:3].write(90);
-  delay(motionTime);
+}
+void moveTo(int pin,int angle){
+  	int steps = 20;
+    float stepAngle = (angle - angles[pin])/steps;
+    int start = angles[pin]+stepAngle;
+    for(int i=0;i<steps;i++){
+      servos[pin].write(start+stepAngle*i);
+      delay(abs(floor(stepAngle*7))+1);
+    }
+    delay(abs(floor(stepAngle*12))+50);
+    angles[pin] = angle;
+}
+void moveTo2(int pin1,int angle1,int pin2,int angle2){
+    int steps = 20;
+    float stepAngle1 = (angle1 - angles[pin1])/steps;
+    int start1 = angles[pin1]+stepAngle1;
+    float stepAngle2 = (angle2 - angles[pin2])/steps;
+    int start2 = angles[pin2]+stepAngle2;
+    for(int i=0;i<steps;i++){
+      servos[pin1].write(start1+stepAngle1*i);
+      servos[pin2].write(start2+stepAngle2*i);
+      delay(abs(floor(stepAngle1*7))+1);
+    }
+    delay(abs(floor(stepAngle1*12))+50);
+    angles[pin1] = angle1;
+    angles[pin2] = angle2;
 }
 void loop() {
  if(Serial.available()){
@@ -201,6 +219,12 @@ void parseCommand() {
       rotateY(v_cmd,1);
     }else if(s_cmd==8){
       rotateY(v_cmd,-1);
+    }else if(s_cmd==9){
+      if(v_cmd==1){
+        enableServos();
+      }else{
+        disableServos();
+      }
     }
   }
   Serial.println("ok");
