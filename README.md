@@ -15,7 +15,7 @@
 
 ### 运行
  * 运行nw.exe
- * 
+ * 工作效果
  ![cubes](https://github.com/xeecos/RubikSolver-nwjs/raw/master/assets/images/clip.gif)
 
  * 演示视频（ youtube - https://youtu.be/3c3i0LgJrCc ，youku - http://v.youku.com/v_show/id_XMTY2MzE5MTcwMA==.html ）
