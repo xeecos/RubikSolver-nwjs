@@ -15,6 +15,9 @@
 
 ### 运行
  * 运行nw.exe
+ * 连接MegaPi所在串口
+ * 将打散的魔方放在机器中间，点击Hold Y，夹住魔方后，再点击Hold X
+ * 点击Start Capture开始解魔方
  
  ![cubes](https://github.com/xeecos/RubikSolver-nwjs/raw/master/assets/images/6.jpg)
 
