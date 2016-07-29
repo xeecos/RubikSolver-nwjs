@@ -7,6 +7,7 @@
  * ```git clone https://github.com/xeecos/RubikSolver-nwjs```
  * 将代码复制到Node WebKit文件夹中
  * 硬件组装
+ ![cubes](https://github.com/xeecos/RubikSolver-nwjs/raw/master/assets/images/5.jpg)
  * 安装**Arduino IDE**（ https://arduino.cc/ ）
  * 安装**Makeblock libraries**（ https://github.com/Makeblock-official/Makeblock-Libraries ）到Arduino IDE安装目录下libraries中
  * 并通过Arduino IDE烧写**MegaPi**程序（ https://github.com/xeecos/RubikSolver-nwjs/Arduino/Arduino.ino ）
