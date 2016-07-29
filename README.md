@@ -5,7 +5,7 @@
 ### 准备工作
  * 安装Node WebKit（ http://nwjs.org ）
  * ```git clone https://github.com/xeecos/RubikSolver-nwjs```
- * 将代码复制到Node WebKit文件夹中
+ * 将代码复制到Node WebKit文件夹中 （上位机代码在app.html中，包括UI和JS逻辑）
  * 硬件组装
  * 安装**Arduino IDE**（ https://arduino.cc/ ）
  * 安装**Makeblock libraries**（ https://github.com/Makeblock-official/Makeblock-Libraries ）到Arduino IDE安装目录下libraries中
