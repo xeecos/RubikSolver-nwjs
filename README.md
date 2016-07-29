@@ -3,16 +3,19 @@
  * **MegaPi**通过串口接收来自上位机nw程序的运动指令驱动舵机。
  * **Makeblock**材料搭建解魔方抓取和旋转机构
 ### 准备工作
+ * 安装Node WebKit（ http://nwjs.org ）
  * ```git clone https://github.com/xeecos/RubikSolver-nwjs```
- * 安装Node WebKit （ http://nwjs.org ）
+ * 将代码复制到Node WebKit文件夹中
  * 硬件组装
  * 安装**Arduino IDE**（ https://arduino.cc/ ）
  * 安装**Makeblock libraries**（ https://github.com/Makeblock-official/Makeblock-Libraries ）到Arduino IDE安装目录下libraries中
  * 并通过Arduino IDE烧写**MegaPi**程序（ https://github.com/xeecos/RubikSolver-nwjs/Arduino/Arduino.ino ）
  * 连接摄像头
+ * MegaPi插上12V电源适配器
 
 ### 运行
- * 演示视频（ youtube - https://youtu.be/3c3i0LgJrCc ，youku - ）
+ * 运行nw.exe
+ * 演示视频（ youtube - https://youtu.be/3c3i0LgJrCc ，youku - http://v.youku.com/v_show/id_XMTY2MzE5MTcwMA==.html ）
 
 ###工作原理
 
