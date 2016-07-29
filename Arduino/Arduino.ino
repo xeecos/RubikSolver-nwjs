@@ -6,23 +6,18 @@ Servo servos[8] = {Servo(),Servo(),Servo(),Servo(),Servo(),Servo(),Servo(),Servo
 String received = "";
 float angles[8] = {90,90,90,90,90,90,90,90};
 int releaseAngle = 55;
-int holdAngle = 108;
+int holdAngle = 104;
 int actionTime = 200;
 int motionTime = 200;
 void setup() {
-  disableServos();
+  //disableServos();
   Serial.begin(115200);
-  Serial2.begin(115200);
-  delay(1000);
-  disableServos();
+  //Serial2.begin(115200);
+  enableServos();
 }
 void disableServos(){
   for(uint8_t i=0;i<8;i++){
-    servos[i].attach(_servoPins[i]);
-    delay(100);
     servos[i].detach();
-    pinMode(_servoPins[i],OUTPUT);
-    digitalWrite(_servoPins[i],HIGH);
   }
 }
 void enableServos(){
@@ -97,7 +92,7 @@ void flipY(int dir){
   delay(motionTime);
 }
 void holdY(){
-  moveTo2(5,holdAngle-4,7,holdAngle+4);
+  moveTo2(5,holdAngle-4+3,7,holdAngle+4+3);
 }
 void releaseY(){
   moveTo2(5,releaseAngle,7,releaseAngle);
@@ -122,8 +117,8 @@ void rotateX(int dir,int face){
     holdX();
     delay(motionTime);
   }
-  moveTo(face==1?0:2,dir>0?120:60);
-  moveTo(face==1?0:2,dir>0?70:110);
+  moveTo(face==1?0:2,dir>0?118:62);
+  moveTo(face==1?0:2,dir>0?75:105);
   moveTo(face==1?0:2,90);
   delay(motionTime);
   releaseY();
@@ -148,8 +143,8 @@ void rotateY(int dir,int face){
     holdY();
     delay(motionTime);
   }
-  moveTo(face==1?1:3,dir>0?120:60);
-  moveTo(face==1?1:3,dir>0?70:110);
+  moveTo(face==1?1:3,dir>0?118:62);
+  moveTo(face==1?1:3,dir>0?72:108);
   moveTo(face==1?1:3,90);
   delay(motionTime);
 }
@@ -159,7 +154,7 @@ void moveTo(int pin,int angle){
     int start = angles[pin]+stepAngle;
     for(int i=0;i<steps;i++){
       servos[pin].write(start+stepAngle*i);
-      delay(abs(floor(stepAngle*7))+1);
+      delay(abs(floor(stepAngle*6))+5);
     }
     delay(abs(floor(stepAngle*12))+50);
     angles[pin] = angle;
@@ -173,7 +168,7 @@ void moveTo2(int pin1,int angle1,int pin2,int angle2){
     for(int i=0;i<steps;i++){
       servos[pin1].write(start1+stepAngle1*i);
       servos[pin2].write(start2+stepAngle2*i);
-      delay(abs(floor(stepAngle1*7))+1);
+      delay(abs(floor(stepAngle1*6))+5);
     }
     delay(abs(floor(stepAngle1*12))+50);
     angles[pin1] = angle1;
