@@ -15,6 +15,9 @@
 
 ### 运行
  * 运行nw.exe
+ 
+ ![cubes](https://github.com/xeecos/RubikSolver-nwjs/raw/master/assets/images/6.jpg)
+
  * 工作效果
  
  ![cubes](https://github.com/xeecos/RubikSolver-nwjs/raw/master/assets/images/clip.gif)
