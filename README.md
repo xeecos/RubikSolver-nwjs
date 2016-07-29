@@ -7,6 +7,7 @@
  * ```git clone https://github.com/xeecos/RubikSolver-nwjs```
  * 将代码复制到Node WebKit文件夹中
  * 硬件组装
+
  ![cubes](https://github.com/xeecos/RubikSolver-nwjs/raw/master/assets/images/5.jpg)
  * 安装**Arduino IDE**（ https://arduino.cc/ ）
  * 安装**Makeblock libraries**（ https://github.com/Makeblock-official/Makeblock-Libraries ）到Arduino IDE安装目录下libraries中
@@ -61,3 +62,12 @@
  * 使用Chrome API - Navigator.getUserMedia()获取摄像头图像，并通过canvas获取元素RGB数据。
  * 由于魔方六面中心位置颜色固定，摄像头采集到所有魔方颜色与这六种颜进行色比较，最接近的颜色可以判断为当前魔方格子的颜色。
  
+## 细节图
+
+ ![cubes](https://github.com/xeecos/RubikSolver-nwjs/raw/master/assets/images/4.jpg)
+
+ ![cubes](https://github.com/xeecos/RubikSolver-nwjs/raw/master/assets/images/3.jpg)
+
+ ![cubes](https://github.com/xeecos/RubikSolver-nwjs/raw/master/assets/images/2.jpg)
+
+ ![cubes](https://github.com/xeecos/RubikSolver-nwjs/raw/master/assets/images/1.jpg)
