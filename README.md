@@ -1,11 +1,11 @@
 # 解三阶魔方舵机机器人
- * nw程序通过摄像头采集图像实现魔方六面颜色识别，计算出解魔方步骤后，转换成舵机旋转指令发送给MegaPi执行。
- * **MegaPi**通过串口接收来自上位机nw程序的运动指令驱动舵机。
- * **Makeblock**材料搭建解魔方抓取和旋转机构
+
+ ![cubes](https://github.com/xeecos/RubikSolver-nwjs/raw/master/assets/images/5.jpg)
+ 
 ### 准备工作
  * 安装Node WebKit（ http://nwjs.org ）
  * ```git clone https://github.com/xeecos/RubikSolver-nwjs```
- * 将代码复制到Node WebKit文件夹中
+ * 将代码复制到Node WebKit文件夹中 （上位机代码在app.html中，包括UI和JS逻辑）
  * 硬件组装
  * 安装**Arduino IDE**（ https://arduino.cc/ ）
  * 安装**Makeblock libraries**（ https://github.com/Makeblock-official/Makeblock-Libraries ）到Arduino IDE安装目录下libraries中
@@ -18,6 +18,10 @@
  * 演示视频（ youtube - https://youtu.be/3c3i0LgJrCc ，youku - http://v.youku.com/v_show/id_XMTY2MzE5MTcwMA==.html ）
 
 ###工作原理
+
+ * nw程序通过摄像头采集图像实现魔方六面颜色识别，计算出解魔方步骤后，转换成舵机旋转指令发送给MegaPi执行。
+ * **MegaPi**通过串口接收来自上位机nw程序的运动指令驱动舵机。
+ * **Makeblock**材料搭建解魔方抓取和旋转机构
 
 **魔方基本元素**
 ### 结构
@@ -60,3 +64,12 @@
  * 使用Chrome API - Navigator.getUserMedia()获取摄像头图像，并通过canvas获取元素RGB数据。
  * 由于魔方六面中心位置颜色固定，摄像头采集到所有魔方颜色与这六种颜进行色比较，最接近的颜色可以判断为当前魔方格子的颜色。
  
+## 细节图
+
+ ![cubes](https://github.com/xeecos/RubikSolver-nwjs/raw/master/assets/images/4.jpg)
+
+ ![cubes](https://github.com/xeecos/RubikSolver-nwjs/raw/master/assets/images/3.jpg)
+
+ ![cubes](https://github.com/xeecos/RubikSolver-nwjs/raw/master/assets/images/2.jpg)
+
+ ![cubes](https://github.com/xeecos/RubikSolver-nwjs/raw/master/assets/images/1.jpg)
