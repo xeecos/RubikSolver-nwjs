@@ -4,15 +4,15 @@
  * **Makeblock**材料搭建解魔方抓取和旋转机构
 ### 准备工作
  * ```git clone https://github.com/xeecos/RubikSolver-nwjs```
- * 安装Node WebKit （http://nwjs.org）
+ * 安装Node WebKit （ http://nwjs.org ）
  * 硬件组装
- * 安装**Arduino IDE**（https://arduino.cc/ ）
- * 安装**Makeblock libraries**（https://github.com/Makeblock-official/Makeblock-Libraries）到Arduino IDE安装目录下libraries中
+ * 安装**Arduino IDE**（ https://arduino.cc/ ）
+ * 安装**Makeblock libraries**（ https://github.com/Makeblock-official/Makeblock-Libraries ）到Arduino IDE安装目录下libraries中
  * 并通过Arduino IDE烧写**MegaPi**程序（ https://github.com/xeecos/RubikSolver-nwjs/Arduino/Arduino.ino ）
  * 连接摄像头
 
 ### 运行
-
+ * 演示视频（ youtube - https://youtu.be/3c3i0LgJrCc ，youku - ）
 
 ###工作原理
 
