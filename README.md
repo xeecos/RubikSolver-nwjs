@@ -1,14 +1,12 @@
 # 解三阶魔方舵机机器人
- * nw程序通过摄像头采集图像实现魔方六面颜色识别，计算出解魔方步骤后，转换成舵机旋转指令发送给MegaPi执行。
- * **MegaPi**通过串口接收来自上位机nw程序的运动指令驱动舵机。
- * **Makeblock**材料搭建解魔方抓取和旋转机构
+
+ ![cubes](https://github.com/xeecos/RubikSolver-nwjs/raw/master/assets/images/5.jpg)
+ 
 ### 准备工作
  * 安装Node WebKit（ http://nwjs.org ）
  * ```git clone https://github.com/xeecos/RubikSolver-nwjs```
  * 将代码复制到Node WebKit文件夹中
  * 硬件组装
-
- ![cubes](https://github.com/xeecos/RubikSolver-nwjs/raw/master/assets/images/5.jpg)
  * 安装**Arduino IDE**（ https://arduino.cc/ ）
  * 安装**Makeblock libraries**（ https://github.com/Makeblock-official/Makeblock-Libraries ）到Arduino IDE安装目录下libraries中
  * 并通过Arduino IDE烧写**MegaPi**程序（ https://github.com/xeecos/RubikSolver-nwjs/Arduino/Arduino.ino ）
@@ -20,6 +18,10 @@
  * 演示视频（ youtube - https://youtu.be/3c3i0LgJrCc ，youku - http://v.youku.com/v_show/id_XMTY2MzE5MTcwMA==.html ）
 
 ###工作原理
+
+ * nw程序通过摄像头采集图像实现魔方六面颜色识别，计算出解魔方步骤后，转换成舵机旋转指令发送给MegaPi执行。
+ * **MegaPi**通过串口接收来自上位机nw程序的运动指令驱动舵机。
+ * **Makeblock**材料搭建解魔方抓取和旋转机构
 
 **魔方基本元素**
 ### 结构
