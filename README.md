@@ -15,6 +15,12 @@
 
 ### 运行
  * 运行nw.exe
+ * 连接**MegaPi**所在串口
+ * 将打散的魔方放在机器中间，点击**HoldY**，夹住魔方后，再点击**HoldX**
+ * 点击**Start Capture**开始解魔方
+ 
+ ![cubes](https://github.com/xeecos/RubikSolver-nwjs/raw/master/assets/images/6.jpg)
+
  * 工作效果
  
  ![cubes](https://github.com/xeecos/RubikSolver-nwjs/raw/master/assets/images/clip.gif)
@@ -25,9 +31,10 @@
 
  * nw程序通过摄像头采集图像实现魔方六面颜色识别，计算出解魔方步骤后，转换成舵机旋转指令发送给MegaPi执行。
  * **MegaPi**通过串口接收来自上位机nw程序的运动指令驱动舵机。
- * **Makeblock**材料搭建解魔方抓取和旋转机构
+ * **Makeblock**（ http://makeblock.com/ ）材料搭建解魔方抓取和旋转机构
 
-**魔方基本元素**
+## 魔方基本元素
+
 ### 结构
 
 三阶魔方由1个中心轴、6个中心块、12个边块及8个角块构成，当它们组合在一起的时候每个零件会互相牵制不会散开，并且任何一面都可水平转动而不影响到其他方块。三阶魔方的结构不只一种，例如空心魔方。
