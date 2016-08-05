@@ -1,7 +1,7 @@
 var NwBuilder = require('nw-builder');
 
 var nw = new NwBuilder({
-  files: ['./package.json', './public/**','./Marlin/**',"./assets/**"],
+  files: ['./package.json', './public/**'],
   platforms: ['osx64','win'],
   macIcns: './assets/app.icns',
   winIco:'./assets/app.ico'
