@@ -1,6 +1,6 @@
 {
   "name": "RubikCubeSolver",
-  "main": "app.html",
+  "main": "./public/app.html",
   "window": {
     "frame": true,
     "transparent": false,
