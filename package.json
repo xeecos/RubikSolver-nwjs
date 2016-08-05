@@ -1,7 +1,9 @@
 {
   "name": "RubikCubeSolver",
   "main": "./public/app.html",
+  "version":"1.0.0",
   "window": {
+    "icon": "assets/icon.png",
     "frame": true,
     "transparent": false,
     "width":1024,
